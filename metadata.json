@@ -1,0 +1,8 @@
+{
+  "name": "MANAS PRIME",
+  "description": "Премиальный трансфер из аэропорта Манас (FRU) в Бишкек и по Кыргызстану. Встреча с табличкой, электромобили Zeekr и Li Auto, фиксированная цена 24/7.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
