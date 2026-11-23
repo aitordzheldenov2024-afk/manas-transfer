@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Briefcase, CarFront, Check, Users } from 'lucide-react';
 import {
   FLEET_VEHICLES,
@@ -17,6 +17,10 @@ interface FleetSectionProps {
 
 function VehiclePhoto({ vehicle }: { vehicle: FleetVehicle }) {
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [vehicle.image]);
 
   if (failed) {
     return (

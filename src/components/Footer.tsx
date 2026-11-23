@@ -1,19 +1,22 @@
 import { Clock, Mail, MapPin, MessageCircle, Phone, Send } from 'lucide-react';
-import { CONTACT_INFO, Language, TRANSLATIONS } from '../data/transferData';
+import {
+  CONTACT_INFO,
+  Language,
+  TRANSLATIONS,
+  buildTelegramUrl,
+  buildWhatsAppUrl,
+} from '../data/transferData';
 
 interface FooterProps {
   lang: Language;
+  bookingMessage: string;
 }
 
-export function Footer({ lang }: FooterProps) {
+export function Footer({ lang, bookingMessage }: FooterProps) {
   const t = TRANSLATIONS[lang];
 
-  const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(
-    CONTACT_INFO.whatsappDefaultText
-  )}`;
-  const telegramUrl = `https://t.me/${CONTACT_INFO.telegramHandle}?text=${encodeURIComponent(
-    CONTACT_INFO.whatsappDefaultText
-  )}`;
+  const whatsappUrl = buildWhatsAppUrl(bookingMessage);
+  const telegramUrl = buildTelegramUrl(bookingMessage);
 
   return (
     <footer

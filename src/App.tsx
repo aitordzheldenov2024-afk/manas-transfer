@@ -9,6 +9,7 @@ import {
   TARIFFS,
   TRANSLATIONS,
   TariffOption,
+  buildBookingMessage,
   calculateFare,
 } from './data/transferData';
 import { Header } from './components/Header';
@@ -54,8 +55,8 @@ export default function App() {
     document.documentElement.lang = lang;
     document.title =
       lang === 'ru'
-        ? 'Манас Трансфер — Трансфер из аэропорта Манас (FRU) в Бишкек и на Иссык-Куль'
-        : 'Manas Transfer — Airport Transfer from Manas (FRU) to Bishkek & Issyk-Kul';
+        ? 'Манас Трансфер — Трансфер из аэропорта Манас (BSZ) в Бишкек и на Иссык-Куль'
+        : 'Manas Transfer — Airport Transfer from Manas (BSZ) to Bishkek & Issyk-Kul';
   }, [lang]);
 
   useEffect(() => {
@@ -147,9 +148,11 @@ export default function App() {
     });
   };
 
+  const bookingMessage = buildBookingMessage(formData, lang);
+
   return (
     <div className="min-h-screen bg-[#080D18] text-[#EDF2FA]">
-      <Header lang={lang} onChangeLang={setLang} />
+      <Header lang={lang} onChangeLang={setLang} bookingMessage={bookingMessage} />
 
       <main>
         <HeroSection
@@ -178,7 +181,7 @@ export default function App() {
         <HowItWorksSection lang={lang} onJumpToBooking={scrollToBookingForm} />
       </main>
 
-      <Footer lang={lang} />
+      <Footer lang={lang} bookingMessage={bookingMessage} />
 
       <BookingConfirmationModal
         lang={lang}

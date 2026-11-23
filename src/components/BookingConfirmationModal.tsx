@@ -10,10 +10,11 @@ import {
   X,
 } from 'lucide-react';
 import {
-  CONTACT_INFO,
   ConfirmedBooking,
   Language,
   TRANSLATIONS,
+  buildTelegramUrl,
+  buildWhatsAppUrl,
   formatKgs,
 } from '../data/transferData';
 
@@ -60,34 +61,24 @@ export function BookingConfirmationModal({
   };
 
   const buildSummaryText = (b: ConfirmedBooking) => {
-    if (lang === 'ru') {
-      return [
-        CONTACT_INFO.whatsappDefaultText,
-        '',
-        `Заявка: ${b.reference}`,
-        `Маршрут: ${b.fromLabel} → ${b.toLabel}`,
-        `Дата и время: ${b.date} в ${b.time}`,
-        `Рейс: ${b.flightNumber || 'не указан'}`,
-        `Тариф: ${b.tariff.name.ru}`,
-        `Автомобиль: ${b.vehicle.name}`,
-        `Опции: ${getOptionsList(b)}`,
-        `Пассажир: ${b.passengerName} (${b.contact})`,
-        `Стоимость: $${b.priceUsd} (${formatKgs(b.priceKgs)} сом)`,
-      ].join('\n');
+    const carLabel = `${b.tariff.name[lang]} — ${b.vehicle.name}`;
+    const priceLabel = `$${b.priceUsd} / ${formatKgs(b.priceKgs)} ${bLabels.som}`;
+    const dateTimeLabel = [b.date, b.time].filter(Boolean).join(', ');
+    const flight = b.flightNumber.trim();
+
+    const lines = [
+      'Hello! I would like to book a transfer from Manas Airport (BSZ).',
+      `Route: ${b.fromLabel} -> ${b.toLabel}`,
+      `Car: ${carLabel} (${priceLabel})`,
+      `Date & Time: ${dateTimeLabel}`,
+    ];
+
+    if (flight) {
+      lines.push(`Flight number: ${flight}`);
     }
-    return [
-      CONTACT_INFO.whatsappDefaultText,
-      '',
-      `Booking ID: ${b.reference}`,
-      `Route: ${b.fromLabel} → ${b.toLabel}`,
-      `Date & time: ${b.date} at ${b.time}`,
-      `Flight: ${b.flightNumber || 'not specified'}`,
-      `Tariff: ${b.tariff.name.en}`,
-      `Vehicle: ${b.vehicle.name}`,
-      `Options: ${getOptionsList(b)}`,
-      `Passenger: ${b.passengerName} (${b.contact})`,
-      `Fixed fare: $${b.priceUsd} (${formatKgs(b.priceKgs)} KGS)`,
-    ].join('\n');
+
+    lines.push('Please send me the payment link/QR to confirm.');
+    return lines.join('\n');
   };
 
   const handleCopy = async () => {
@@ -231,9 +222,7 @@ export function BookingConfirmationModal({
               <div className="pt-2 space-y-2.5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                   <a
-                    href={`https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(
-                      buildSummaryText(booking)
-                    )}`}
+                    href={buildWhatsAppUrl(buildSummaryText(booking))}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[#C9AA6E] hover:bg-[#D8BC83] text-[#080D18] text-[13px] font-bold transition-colors whitespace-nowrap"
@@ -242,9 +231,7 @@ export function BookingConfirmationModal({
                     <span>{t.sendWhatsapp}</span>
                   </a>
                   <a
-                    href={`https://t.me/${CONTACT_INFO.telegramHandle}?text=${encodeURIComponent(
-                      buildSummaryText(booking)
-                    )}`}
+                    href={buildTelegramUrl(buildSummaryText(booking))}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-lg bg-[#152440] hover:bg-[#1D3054] border border-[#9EC0F5]/[0.16] text-[#F5F8FD] text-[13px] font-semibold transition-colors whitespace-nowrap"

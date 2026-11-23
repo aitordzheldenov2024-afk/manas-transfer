@@ -1,13 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import { ChevronDown, Menu, MessageCircle, Send, X } from 'lucide-react';
-import { CONTACT_INFO, Language, TRANSLATIONS } from '../data/transferData';
+import {
+  Language,
+  TRANSLATIONS,
+  buildTelegramUrl,
+  buildWhatsAppUrl,
+} from '../data/transferData';
 
 interface HeaderProps {
   lang: Language;
   onChangeLang: (lang: Language) => void;
+  bookingMessage: string;
 }
 
-export function Header({ lang, onChangeLang }: HeaderProps) {
+export function Header({ lang, onChangeLang, bookingMessage }: HeaderProps) {
   const t = TRANSLATIONS[lang];
   const [quickMenuOpen, setQuickMenuOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -41,12 +47,8 @@ export function Header({ lang, onChangeLang }: HeaderProps) {
     };
   }, []);
 
-  const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(
-    CONTACT_INFO.whatsappDefaultText
-  )}`;
-  const telegramUrl = `https://t.me/${CONTACT_INFO.telegramHandle}?text=${encodeURIComponent(
-    CONTACT_INFO.whatsappDefaultText
-  )}`;
+  const whatsappUrl = buildWhatsAppUrl(bookingMessage);
+  const telegramUrl = buildTelegramUrl(bookingMessage);
 
   const navItems = [
     { href: '#fleet', label: t.nav.fleet },

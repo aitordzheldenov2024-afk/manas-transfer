@@ -1,3 +1,14 @@
+import heroAirportImg from '../assets/images/hero_manas_airport_night_1795273722657.jpg';
+import economySedanImg from '../assets/images/tariff_economy_sedan_1795273722419.jpg';
+import comfortSedanImg from '../assets/images/tariff_comfort_sedan_1795273724368.jpg';
+import electricEvImg from '../assets/images/tariff_electric_ev_1795273724251.jpg';
+import mercedesEClassImg from '../assets/images/car_mercedes_eclass_light_1795274961194.jpg';
+import bmwX7Img from '../assets/images/car_bmw_x7_light_1795274961495.jpg';
+import zeekr001Img from '../assets/images/car_zeekr_001_light_1795274962325.jpg';
+import liAutoL9Img from '../assets/images/car_li_auto_l9_light_1795274961498.jpg';
+import kiaCarnivalImg from '../assets/images/tariff_minivan_family_1795273725551.jpg';
+import sprinterBusImg from '../assets/images/car_sprinter_bus_light_1795274961853.jpg';
+
 export type Language = 'ru' | 'en';
 
 export type TariffId =
@@ -81,7 +92,7 @@ export interface ConfirmedBooking {
   contact: string;
 }
 
-export const HERO_IMAGE = '/src/assets/images/hero_manas_airport_night_1795273722657.jpg';
+export const HERO_IMAGE = heroAirportImg;
 
 export const CHILD_SEAT_PRICE_KGS = 300;
 export const CHILD_SEAT_PRICE_USD = 3;
@@ -92,7 +103,7 @@ export const CONTACT_INFO = {
   whatsappNumber: '996770443305',
   telegramHandle: 'HOPEAT',
   whatsappDefaultText:
-    'Hello! I would like to book a transfer from Manas Airport (FRU). Please send me the payment link/QR to confirm.',
+    'Hello! I would like to book a transfer from Manas Airport (BSZ). Please send me the payment link/QR to confirm.',
   email: 'info@manastransfer.kg',
 };
 
@@ -106,7 +117,7 @@ export const TARIFFS: TariffOption[] = [
     basePriceKgs: 3000,
     basePriceUsd: 34,
     defaultVehicleId: 'hyundai-solaris',
-    image: '/src/assets/images/tariff_economy_sedan_1795273722419.jpg',
+    image: economySedanImg,
   },
   {
     id: 'comfort',
@@ -117,7 +128,7 @@ export const TARIFFS: TariffOption[] = [
     basePriceKgs: 3500,
     basePriceUsd: 40,
     defaultVehicleId: 'kia-k5',
-    image: '/src/assets/images/tariff_comfort_sedan_1795273724368.jpg',
+    image: comfortSedanImg,
   },
   {
     id: 'electric',
@@ -128,7 +139,7 @@ export const TARIFFS: TariffOption[] = [
     basePriceKgs: 3000,
     basePriceUsd: 34,
     defaultVehicleId: 'byd-han',
-    image: '/src/assets/images/tariff_electric_ev_1795273724251.jpg',
+    image: electricEvImg,
   },
   {
     id: 'premium',
@@ -139,7 +150,7 @@ export const TARIFFS: TariffOption[] = [
     basePriceKgs: 4800,
     basePriceUsd: 55,
     defaultVehicleId: 'mercedes-e-class',
-    image: '/src/assets/images/car_mercedes_eclass_light_1795274961194.jpg',
+    image: mercedesEClassImg,
   },
   {
     id: 'business',
@@ -150,7 +161,7 @@ export const TARIFFS: TariffOption[] = [
     basePriceKgs: 5700,
     basePriceUsd: 65,
     defaultVehicleId: 'zeekr-001',
-    image: '/src/assets/images/car_zeekr_001_light_1795274962325.jpg',
+    image: zeekr001Img,
   },
   {
     id: 'minivan-bus',
@@ -166,7 +177,7 @@ export const TARIFFS: TariffOption[] = [
     pricePrefix: { ru: 'от', en: 'from' },
     secondaryPriceNote: { ru: '7 мест $65 · 12-м 8 100 сом', en: '7-seat $65 · 12m 8,100 KGS' },
     defaultVehicleId: 'kia-carnival',
-    image: '/src/assets/images/tariff_minivan_family_1795273725551.jpg',
+    image: kiaCarnivalImg,
   },
 ];
 
@@ -189,7 +200,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 3000,
     basePriceUsd: 34,
-    image: '/src/assets/images/tariff_economy_sedan_1795273722419.jpg',
+    image: economySedanImg,
   },
   {
     id: 'kia-k5',
@@ -209,7 +220,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 3500,
     basePriceUsd: 40,
-    image: '/src/assets/images/tariff_comfort_sedan_1795273724368.jpg',
+    image: comfortSedanImg,
   },
   {
     id: 'byd-han',
@@ -229,7 +240,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 3000,
     basePriceUsd: 34,
-    image: '/src/assets/images/tariff_electric_ev_1795273724251.jpg',
+    image: electricEvImg,
   },
   {
     id: 'mercedes-e-class',
@@ -249,7 +260,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 4800,
     basePriceUsd: 55,
-    image: '/src/assets/images/car_mercedes_eclass_light_1795274961194.jpg',
+    image: mercedesEClassImg,
   },
   {
     id: 'bmw-x7',
@@ -269,7 +280,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 4800,
     basePriceUsd: 55,
-    image: '/src/assets/images/car_bmw_x7_light_1795274961495.jpg',
+    image: bmwX7Img,
   },
   {
     id: 'zeekr-001',
@@ -289,7 +300,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 5700,
     basePriceUsd: 65,
-    image: '/src/assets/images/car_zeekr_001_light_1795274962325.jpg',
+    image: zeekr001Img,
   },
   {
     id: 'li-auto-l9',
@@ -309,7 +320,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 5700,
     basePriceUsd: 65,
-    image: '/src/assets/images/car_li_auto_l9_light_1795274961498.jpg',
+    image: liAutoL9Img,
   },
   {
     id: 'kia-carnival',
@@ -329,7 +340,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 5700,
     basePriceUsd: 65,
-    image: '/src/assets/images/tariff_minivan_family_1795273725551.jpg',
+    image: kiaCarnivalImg,
   },
   {
     id: 'mercedes-sprinter',
@@ -349,7 +360,7 @@ export const FLEET_VEHICLES: FleetVehicle[] = [
     },
     basePriceKgs: 8100,
     basePriceUsd: 93,
-    image: '/src/assets/images/car_sprinter_bus_light_1795274961853.jpg',
+    image: sprinterBusImg,
   },
 ];
 
@@ -459,6 +470,58 @@ export function formatKgs(amount: number): string {
   return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }
 
+export function buildBookingMessage(formData: BookingFormData, lang: Language): string {
+  const vehicle =
+    FLEET_VEHICLES.find((v) => v.id === formData.vehicleId) ?? FLEET_VEHICLES[0];
+  const tariff =
+    TARIFFS.find((item) => item.id === formData.tariffId) ?? TARIFFS[0];
+  const destination =
+    DESTINATIONS.find((dest) => dest.id === formData.destinationId) ?? DESTINATIONS[0];
+  const { kgs, usd } = calculateFare(
+    vehicle.basePriceKgs,
+    vehicle.basePriceUsd,
+    destination,
+    formData.childSeat
+  );
+
+  const airportLabel = TRANSLATIONS[lang].booking.airportName;
+  const destinationLabel =
+    formData.destinationId === 'custom' && formData.customAddress.trim()
+      ? formData.customAddress.trim()
+      : destination.shortLabel[lang];
+
+  const fromLabel = formData.isReversed ? destinationLabel : airportLabel;
+  const toLabel = formData.isReversed ? airportLabel : destinationLabel;
+
+  const carLabel = `${tariff.name[lang]} — ${vehicle.name}`;
+  const priceLabel = `$${usd} / ${formatKgs(kgs)} ${TRANSLATIONS[lang].booking.som}`;
+  const dateTimeLabel = [formData.date, formData.time].filter(Boolean).join(', ');
+  const flight = formData.flightNumber.trim();
+
+  const lines = [
+    'Hello! I would like to book a transfer from Manas Airport (BSZ).',
+    `Route: ${fromLabel} -> ${toLabel}`,
+    `Car: ${carLabel} (${priceLabel})`,
+    `Date & Time: ${dateTimeLabel}`,
+  ];
+
+  if (flight) {
+    lines.push(`Flight number: ${flight}`);
+  }
+
+  lines.push('Please send me the payment link/QR to confirm.');
+
+  return lines.join('\n');
+}
+
+export function buildWhatsAppUrl(message: string): string {
+  return `https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(message)}`;
+}
+
+export function buildTelegramUrl(message: string): string {
+  return `https://t.me/${CONTACT_INFO.telegramHandle}?text=${encodeURIComponent(message)}`;
+}
+
 export const TRANSLATIONS = {
   ru: {
     brand: 'Манас Трансфер',
@@ -472,7 +535,7 @@ export const TRANSLATIONS = {
       orderViaTelegram: 'Написать в Telegram',
     },
     hero: {
-      kicker: 'Аэропорт Манас (FRU) · Бишкек · Иссык-Куль · Весь Кыргызстан',
+      kicker: 'Аэропорт Манас (BSZ) · Бишкек · Иссык-Куль · Весь Кыргызстан',
       title: 'Трансфер из аэропорта Манас в Бишкек и по Кыргызстану',
       subtitle:
         'Удобный выбор класса авто в один клик — от Эконома и электромобилей BYD до бизнес-класса Zeekr, минивэнов и 12-метровых автобусов. Фиксированная цена в сомах и долларах.',
@@ -485,7 +548,7 @@ export const TRANSLATIONS = {
     booking: {
       fromLabel: 'Откуда',
       toLabel: 'Куда',
-      airportName: 'Аэропорт Манас (FRU)',
+      airportName: 'Аэропорт Манас (BSZ)',
       swapAria: 'Поменять местами откуда и куда',
       customAddressPlaceholder: 'Укажите отель, улицу или город',
       selectTariffTitle: 'Выберите тариф',
@@ -528,15 +591,15 @@ export const TRANSLATIONS = {
       },
       seatsUnit: 'мест',
       bagsUnit: 'багажа',
-      routeHint: 'Манас (FRU) → Бишкек',
+      routeHint: 'Манас (BSZ) → Бишкек',
       chooseBtn: 'Выбрать',
       chosenBtn: 'Выбран',
     },
     routesSection: {
       title: 'Фиксированные цены по направлениям',
       subtitle:
-        'Стоимость трансфера из аэропорта «Манас» (FRU) в Бишкек, Ала-Арчу, на Иссык-Куль и в Каракол. Нажмите на нужный маршрут для расчёта.',
-      routeCol: 'Направление из аэропорта Манас (FRU)',
+        'Стоимость трансфера из аэропорта «Манас» (BSZ) в Бишкек, Ала-Арчу, на Иссык-Куль и в Каракол. Нажмите на нужный маршрут для расчёта.',
+      routeCol: 'Направление из аэропорта Манас (BSZ)',
       timeCol: 'В пути',
       clickHint: 'Нажмите на маршрут для выбора',
     },
@@ -563,7 +626,7 @@ export const TRANSLATIONS = {
           title: 'Встреча с табличкой',
           description:
             'Водитель встречает вас прямо в зале прилёта аэропорта «Манас» с именной табличкой, помогает с багажом и провожает к машине.',
-          fact: 'Персональная встреча в терминале FRU',
+          fact: 'Персональная встреча в терминале BSZ',
         },
         {
           number: '04',
@@ -624,10 +687,10 @@ export const TRANSLATIONS = {
     },
     footer: {
       about:
-        'Сервис трансферов из международного аэропорта «Манас» (FRU) в Бишкек, на Иссык-Куль и по всему Кыргызстану. Легковые авто, электромобили, минивэны и автобусы.',
+        'Сервис трансферов из международного аэропорта «Манас» (BSZ) в Бишкек, на Иссык-Куль и по всему Кыргызстану. Легковые авто, электромобили, минивэны и автобусы.',
       hoursTitle: 'Режим работы',
       hoursValue: '24/7 — круглосуточная подача и поддержка',
-      locationValue: 'Аэропорт «Манас» (FRU) · Бишкек, Кыргызстан',
+      locationValue: 'Аэропорт «Манас» (BSZ) · Бишкек, Кыргызстан',
       navTitle: 'Навигация',
       contactsTitle: 'Контакты и мессенджеры 24/7',
       whatsappBtn: 'WhatsApp',
@@ -648,7 +711,7 @@ export const TRANSLATIONS = {
       orderViaTelegram: 'Message on Telegram',
     },
     hero: {
-      kicker: 'Manas Airport (FRU) · Bishkek · Issyk-Kul · All of Kyrgyzstan',
+      kicker: 'Manas Airport (BSZ) · Bishkek · Issyk-Kul · All of Kyrgyzstan',
       title: 'Manas Airport Transfer to Bishkek & Across Kyrgyzstan',
       subtitle:
         'Pick your class in one click — from Economy sedans and BYD electric cars to Business Zeekr EVs, minivans, and 12-meter coaches. Fixed prices in KGS and USD.',
@@ -661,7 +724,7 @@ export const TRANSLATIONS = {
     booking: {
       fromLabel: 'Pickup',
       toLabel: 'Drop-off',
-      airportName: 'Manas Airport (FRU)',
+      airportName: 'Manas Airport (BSZ)',
       swapAria: 'Swap pickup and drop-off',
       customAddressPlaceholder: 'Enter hotel, street, or city',
       selectTariffTitle: 'Choose a tariff',
@@ -704,15 +767,15 @@ export const TRANSLATIONS = {
       },
       seatsUnit: 'seats',
       bagsUnit: 'bags',
-      routeHint: 'Manas (FRU) → Bishkek',
+      routeHint: 'Manas (BSZ) → Bishkek',
       chooseBtn: 'Select',
       chosenBtn: 'Selected',
     },
     routesSection: {
       title: 'Fixed Destination Rates',
       subtitle:
-        'Transparent fares from Manas Airport (FRU) to Bishkek, Ala-Archa, Issyk-Kul, and Karakol. Click any destination row to calculate.',
-      routeCol: 'Route from Manas Airport (FRU)',
+        'Transparent fares from Manas Airport (BSZ) to Bishkek, Ala-Archa, Issyk-Kul, and Karakol. Click any destination row to calculate.',
+      routeCol: 'Route from Manas Airport (BSZ)',
       timeCol: 'Travel time',
       clickHint: 'Click a route to apply',
     },
@@ -739,7 +802,7 @@ export const TRANSLATIONS = {
           title: 'Meet & Greet With Name Sign',
           description:
             'Your driver meets you directly inside the Manas arrivals hall with a clear name board, assists with luggage, and escorts you to the vehicle.',
-          fact: 'Personal reception inside FRU terminal',
+          fact: 'Personal reception inside BSZ terminal',
         },
         {
           number: '04',
@@ -800,10 +863,10 @@ export const TRANSLATIONS = {
     },
     footer: {
       about:
-        'Reliable airport transfers from Manas International Airport (FRU) to Bishkek, Issyk-Kul, and across Kyrgyzstan. Sedans, EVs, minivans, and 12m coaches.',
+        'Reliable airport transfers from Manas International Airport (BSZ) to Bishkek, Issyk-Kul, and across Kyrgyzstan. Sedans, EVs, minivans, and 12m coaches.',
       hoursTitle: 'Working Hours',
       hoursValue: '24/7 — round-the-clock dispatch & English support',
-      locationValue: 'Manas Airport (FRU) · Bishkek, Kyrgyzstan',
+      locationValue: 'Manas Airport (BSZ) · Bishkek, Kyrgyzstan',
       navTitle: 'Navigation',
       contactsTitle: '24/7 Contacts & Messengers',
       whatsappBtn: 'WhatsApp',

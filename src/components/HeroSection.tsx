@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import {
   AlertCircle,
   ArrowLeftRight,
@@ -39,6 +39,10 @@ interface HeroSectionProps {
 
 function TariffThumb({ tariff, lang }: { tariff: TariffOption; lang: Language }) {
   const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [tariff.image]);
 
   if (failed) {
     return (
