@@ -87,10 +87,12 @@ export const CHILD_SEAT_PRICE_KGS = 300;
 export const CHILD_SEAT_PRICE_USD = 3;
 
 export const CONTACT_INFO = {
-  phoneDisplay: '+996 555 800 900',
-  phoneHref: 'tel:+996555800900',
-  whatsappNumber: '996555800900',
-  telegramHandle: 'manastransfer_kg',
+  phoneDisplay: '+996 770 44 33 05',
+  phoneHref: 'tel:+996770443305',
+  whatsappNumber: '996770443305',
+  telegramHandle: 'BT25RD',
+  whatsappDefaultText:
+    'Hello! I would like to book a transfer from Manas Airport (FRU). Please send me the payment link/QR to confirm.',
   email: 'info@manastransfer.kg',
 };
 

@@ -42,9 +42,7 @@ export function Header({ lang, onChangeLang }: HeaderProps) {
   }, []);
 
   const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(
-    lang === 'ru'
-      ? 'Здравствуйте! Хочу заказать трансфер из аэропорта Манас (FRU).'
-      : 'Hello! I would like to book a transfer from Manas Airport (FRU).'
+    CONTACT_INFO.whatsappDefaultText
   )}`;
   const telegramUrl = `https://t.me/${CONTACT_INFO.telegramHandle}`;
 

@@ -62,7 +62,9 @@ export function BookingConfirmationModal({
   const buildSummaryText = (b: ConfirmedBooking) => {
     if (lang === 'ru') {
       return [
-        `Манас Трансфер — Заявка ${b.reference}`,
+        CONTACT_INFO.whatsappDefaultText,
+        '',
+        `Заявка: ${b.reference}`,
         `Маршрут: ${b.fromLabel} → ${b.toLabel}`,
         `Дата и время: ${b.date} в ${b.time}`,
         `Рейс: ${b.flightNumber || 'не указан'}`,
@@ -74,7 +76,9 @@ export function BookingConfirmationModal({
       ].join('\n');
     }
     return [
-      `Manas Transfer — Booking ${b.reference}`,
+      CONTACT_INFO.whatsappDefaultText,
+      '',
+      `Booking ID: ${b.reference}`,
       `Route: ${b.fromLabel} → ${b.toLabel}`,
       `Date & time: ${b.date} at ${b.time}`,
       `Flight: ${b.flightNumber || 'not specified'}`,

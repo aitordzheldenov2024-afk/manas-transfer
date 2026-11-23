@@ -9,9 +9,7 @@ export function Footer({ lang }: FooterProps) {
   const t = TRANSLATIONS[lang];
 
   const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(
-    lang === 'ru'
-      ? 'Здравствуйте! Хочу узнать цену и заказать трансфер из аэропорта Манас.'
-      : 'Hello! I would like to book a transfer from Manas Airport (FRU).'
+    CONTACT_INFO.whatsappDefaultText
   )}`;
   const telegramUrl = `https://t.me/${CONTACT_INFO.telegramHandle}`;
 
