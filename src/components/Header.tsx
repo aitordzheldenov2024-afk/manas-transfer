@@ -44,7 +44,9 @@ export function Header({ lang, onChangeLang }: HeaderProps) {
   const whatsappUrl = `https://wa.me/${CONTACT_INFO.whatsappNumber}?text=${encodeURIComponent(
     CONTACT_INFO.whatsappDefaultText
   )}`;
-  const telegramUrl = `https://t.me/${CONTACT_INFO.telegramHandle}`;
+  const telegramUrl = `https://t.me/${CONTACT_INFO.telegramHandle}?text=${encodeURIComponent(
+    CONTACT_INFO.whatsappDefaultText
+  )}`;
 
   const navItems = [
     { href: '#fleet', label: t.nav.fleet },

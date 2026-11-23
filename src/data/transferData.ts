@@ -90,7 +90,7 @@ export const CONTACT_INFO = {
   phoneDisplay: '+996 770 44 33 05',
   phoneHref: 'tel:+996770443305',
   whatsappNumber: '996770443305',
-  telegramHandle: 'BT25RD',
+  telegramHandle: 'HOPEAT',
   whatsappDefaultText:
     'Hello! I would like to book a transfer from Manas Airport (FRU). Please send me the payment link/QR to confirm.',
   email: 'info@manastransfer.kg',
