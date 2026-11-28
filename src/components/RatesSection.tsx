@@ -1,8 +1,8 @@
 import { ArrowUpRight } from 'lucide-react';
 import {
   DESTINATIONS,
+  FLEET_VEHICLES,
   Language,
-  TARIFFS,
   TRANSLATIONS,
   calculateFare,
   formatKgs,
@@ -14,6 +14,8 @@ interface RatesSectionProps {
   onSelectDestination: (destinationId: string) => void;
 }
 
+const RATE_COLUMNS = ['economy', 'comfort-sedan', 'business-class', 'minivan', 'minibus', 'electric-hybrid'];
+
 export function RatesSection({
   lang,
   selectedDestinationId,
@@ -22,42 +24,39 @@ export function RatesSection({
   const t = TRANSLATIONS[lang].routesSection;
   const som = TRANSLATIONS[lang].booking.som;
   const fixedDestinations = DESTINATIONS.filter((d) => d.id !== 'custom');
+  const columnVehicles = RATE_COLUMNS.map(
+    (id) => FLEET_VEHICLES.find((v) => v.id === id) ?? FLEET_VEHICLES[0]
+  );
 
   return (
     <section
       id="routes"
-      className="scroll-mt-20 py-20 sm:py-24 border-t border-[#9EC0F5]/[0.09] bg-[#0B1222]"
+      className="scroll-mt-20 py-16 sm:py-24 bg-[#FFFFFF] border-t border-[#E2E8F0]"
     >
       <div className="max-w-[1200px] mx-auto px-5 sm:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
-          <div className="max-w-xl">
-            <h2 className="text-[clamp(1.75rem,3vw,2.35rem)] font-semibold tracking-[-0.02em] text-[#F5F8FD] text-balance mb-3">
-              {t.title}
-            </h2>
-            <p className="text-[15px] leading-[1.65] text-[#96AAC6]">{t.subtitle}</p>
-          </div>
-          <p className="text-[13px] text-[#7D93B4] whitespace-nowrap shrink-0">{t.clickHint}</p>
+        <div className="max-w-2xl mb-10">
+          <h2 className="text-[clamp(1.75rem,3vw,2.4rem)] font-extrabold tracking-[-0.02em] text-[#041427] text-balance mb-3">
+            {t.title}
+          </h2>
+          <p className="text-[15px] leading-[1.65] text-[#475569]">{t.subtitle}</p>
         </div>
 
-        <div className="rounded-2xl glass-navy overflow-hidden">
+        <div className="bg-white rounded-2xl border border-[#DCE4EE] shadow-[0_6px_28px_rgba(4,20,39,0.05)] overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[880px]">
+            <table className="w-full text-left border-collapse min-w-[920px]">
               <thead>
-                <tr className="border-b border-[#9EC0F5]/[0.12] bg-[#101B30]/75 text-[12px] font-medium text-[#8EA4C4]">
-                  <th className="py-4 px-5 font-medium">{t.routeCol}</th>
-                  <th className="py-4 px-3 font-medium whitespace-nowrap">{t.timeCol}</th>
-                  {TARIFFS.map((tariff) => (
-                    <th
-                      key={tariff.id}
-                      className="py-4 px-3 font-medium text-right whitespace-nowrap text-[#E6EFFB]"
-                    >
-                      {tariff.name[lang]}
+                <tr className="bg-[#041427] text-white text-[12px] font-semibold">
+                  <th className="py-4 px-5">{t.routeCol}</th>
+                  <th className="py-4 px-3 whitespace-nowrap text-[#CBD6E4]">{t.timeCol}</th>
+                  {columnVehicles.map((vehicle) => (
+                    <th key={vehicle.id} className="py-4 px-3 text-right whitespace-nowrap">
+                      {vehicle.name[lang]}
                     </th>
                   ))}
-                  <th className="py-4 pr-5 pl-2 w-10" aria-hidden="true" />
+                  <th className="py-4 pr-5 pl-3 text-right whitespace-nowrap" aria-label="Action" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#9EC0F5]/[0.08]">
+              <tbody className="divide-y divide-[#E8EEF5]">
                 {fixedDestinations.map((dest) => {
                   const isActive = dest.id === selectedDestinationId;
                   return (
@@ -65,39 +64,50 @@ export function RatesSection({
                       key={dest.id}
                       onClick={() => onSelectDestination(dest.id)}
                       className={`group cursor-pointer transition-colors duration-150 ${
-                        isActive ? 'bg-[#C9AA6E]/[0.1]' : 'hover:bg-[#172540]/60'
+                        isActive ? 'bg-[#FFFBF4]' : 'hover:bg-[#F8FAFC]'
                       }`}
                     >
                       <td className="py-4 px-5">
-                        <span className="text-[14px] font-medium text-[#F2F6FC] group-hover:text-[#C9AA6E] transition-colors">
+                        <div className="text-[14px] font-bold text-[#041427]">
                           {dest.label[lang]}
-                        </span>
+                        </div>
+                        <div className="text-[12px] text-[#64748B] mt-0.5">
+                          {dest.regionNote[lang]}
+                        </div>
                       </td>
-                      <td className="py-4 px-3 text-[12px] font-mono tabular-nums text-[#8398B8] whitespace-nowrap">
+                      <td className="py-4 px-3 text-[12.5px] font-mono tabular-nums text-[#475569] whitespace-nowrap">
                         {dest.distanceKm} km · {dest.duration[lang]}
                       </td>
-                      {TARIFFS.map((tariff) => {
+                      {columnVehicles.map((vehicle) => {
                         const { kgs, usd } = calculateFare(
-                          tariff.basePriceKgs,
-                          tariff.basePriceUsd,
+                          vehicle.basePriceKgs,
+                          vehicle.basePriceUsd,
                           dest
                         );
                         return (
                           <td
-                            key={tariff.id}
+                            key={vehicle.id}
                             className="py-4 px-3 text-right font-mono tabular-nums whitespace-nowrap"
                           >
-                            <div className="text-[14px] font-semibold text-[#F2F6FC]">${usd}</div>
-                            <div className="text-[11px] text-[#C9AA6E]/90">
+                            <div className="text-[14px] font-extrabold text-[#041427]">${usd}</div>
+                            <div className="text-[11px] font-semibold text-[#475569]">
                               {formatKgs(kgs)} {som}
                             </div>
                           </td>
                         );
                       })}
-                      <td className="py-4 pr-5 pl-2 text-right">
-                        <span className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-[#7D93B4] group-hover:text-[#C9AA6E] group-hover:bg-[#9EC0F5]/10 transition-colors">
-                          <ArrowUpRight className="w-4 h-4" />
-                        </span>
+                      <td className="py-4 pr-5 pl-3 text-right whitespace-nowrap">
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            onSelectDestination(dest.id);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0f2747] hover:bg-[#041427] text-white text-[12px] font-semibold transition-colors whitespace-nowrap cursor-pointer"
+                        >
+                          <span>{t.actionBtn}</span>
+                          <ArrowUpRight className="w-3.5 h-3.5 text-[#f9e4c8]" />
+                        </button>
                       </td>
                     </tr>
                   );

@@ -6,9 +6,7 @@ import {
   FLEET_VEHICLES,
   FleetVehicle,
   Language,
-  TARIFFS,
   TRANSLATIONS,
-  TariffOption,
   buildBookingMessage,
   calculateFare,
 } from './data/transferData';
@@ -33,11 +31,10 @@ function getDefaultDate(): string {
 export default function App() {
   const [lang, setLang] = useState<Language>('en');
   const [formData, setFormData] = useState<BookingFormData>(() => ({
-    destinationId: 'bishkek-hotel',
-    customAddress: '',
+    destinationId: 'bishkek',
+    hotelAddress: '',
     isReversed: false,
-    tariffId: 'economy',
-    vehicleId: 'hyundai-solaris',
+    vehicleId: 'economy',
     date: getDefaultDate(),
     time: '14:30',
     flightNumber: '',
@@ -55,8 +52,8 @@ export default function App() {
     document.documentElement.lang = lang;
     document.title =
       lang === 'ru'
-        ? 'Манас Трансфер — Трансфер из аэропорта Манас (BSZ) в Бишкек и на Иссык-Куль'
-        : 'Manas Transfer — Airport Transfer from Manas (BSZ) to Bishkek & Issyk-Kul';
+        ? 'Манас Трансфер — Трансфер из аэропорта Манас (BSZ) в Бишкек и по Кыргызстану'
+        : 'Manas Transfer — Executive Airport Transfers from Manas (BSZ) Across Kyrgyzstan';
   }, [lang]);
 
   useEffect(() => {
@@ -78,18 +75,16 @@ export default function App() {
     }
   };
 
-  const handleSelectTariffCard = (tariff: TariffOption) => {
+  const handleSelectVehicleCard = (vehicle: FleetVehicle) => {
     setFormData((prev) => ({
       ...prev,
-      tariffId: tariff.id,
-      vehicleId: tariff.defaultVehicleId,
+      vehicleId: vehicle.id,
     }));
   };
 
   const handleSelectVehicleFromFleet = (vehicle: FleetVehicle) => {
     setFormData((prev) => ({
       ...prev,
-      tariffId: vehicle.tariffId,
       vehicleId: vehicle.id,
     }));
     setVehicleHighlighted(true);
@@ -110,8 +105,6 @@ export default function App() {
   const handleSubmitBooking = () => {
     const vehicle =
       FLEET_VEHICLES.find((v) => v.id === formData.vehicleId) ?? FLEET_VEHICLES[0];
-    const tariff =
-      TARIFFS.find((item) => item.id === formData.tariffId) ?? TARIFFS[0];
     const destination =
       DESTINATIONS.find((dest) => dest.id === formData.destinationId) ?? DESTINATIONS[0];
     const { kgs, usd } = calculateFare(
@@ -122,9 +115,10 @@ export default function App() {
     );
 
     const airportText = TRANSLATIONS[lang].booking.airportName;
+    const hotel = formData.hotelAddress.trim();
     const destText =
-      formData.destinationId === 'custom' && formData.customAddress.trim()
-        ? formData.customAddress.trim()
+      formData.destinationId === 'custom' && hotel
+        ? hotel
         : destination.shortLabel[lang];
 
     const randomDigits = Math.floor(100 + Math.random() * 900);
@@ -134,10 +128,10 @@ export default function App() {
       reference,
       fromLabel: formData.isReversed ? destText : airportText,
       toLabel: formData.isReversed ? airportText : destText,
+      hotelAddress: hotel,
       date: formData.date,
       time: formData.time,
       flightNumber: formData.flightNumber.trim(),
-      tariff,
       vehicle,
       meetWithSign: formData.meetWithSign,
       childSeat: formData.childSeat,
@@ -151,7 +145,7 @@ export default function App() {
   const bookingMessage = buildBookingMessage(formData, lang);
 
   return (
-    <div className="min-h-screen bg-[#080D18] text-[#EDF2FA]">
+    <div className="min-h-screen bg-[#FFFFFF] text-[#041427]">
       <Header lang={lang} onChangeLang={setLang} bookingMessage={bookingMessage} />
 
       <main>
@@ -160,7 +154,7 @@ export default function App() {
           formData={formData}
           vehicleHighlighted={vehicleHighlighted}
           onUpdateForm={handleUpdateForm}
-          onSelectTariffCard={handleSelectTariffCard}
+          onSelectVehicleCard={handleSelectVehicleCard}
           onSubmitBooking={handleSubmitBooking}
         />
 
