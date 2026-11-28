@@ -42,6 +42,7 @@ export interface Destination {
 
 export interface BookingFormData {
   destinationId: string;
+  dropoffText: string;
   hotelAddress: string;
   isReversed: boolean;
   vehicleId: string;
@@ -49,7 +50,7 @@ export interface BookingFormData {
   time: string;
   flightNumber: string;
   meetWithSign: boolean;
-  childSeat: boolean;
+  childSeatCount: number;
   passengerName: string;
   contact: string;
 }
@@ -64,7 +65,7 @@ export interface ConfirmedBooking {
   flightNumber: string;
   vehicle: FleetVehicle;
   meetWithSign: boolean;
-  childSeat: boolean;
+  childSeatCount: number;
   priceKgs: number;
   priceUsd: number;
   passengerName: string;
@@ -439,23 +440,293 @@ export const DESTINATIONS: Destination[] = [
   },
 ];
 
+export interface LocalLandmark {
+  id: string;
+  destinationId: string;
+  name: Record<Language, string>;
+  address: Record<Language, string>;
+  keywords: string[];
+}
+
+export const BISHKEK_LANDMARKS: LocalLandmark[] = [
+  {
+    id: 'globus-tokombaeva',
+    destinationId: 'bishkek-south',
+    name: {
+      en: 'Globus Tokombaeva',
+      ru: 'Глобус на Токомбаева',
+    },
+    address: {
+      en: 'Aaly Tokombaev St, Bishkek',
+      ru: 'ул. Аалы Токомбаева, Бишкек',
+    },
+    keywords: [
+      'globus',
+      'tokombaeva',
+      'tokombaev',
+      'глобус',
+      'токомбаева',
+      'аалы токомбаева',
+      'южная магистраль',
+      'bishkek',
+      'бишкек',
+    ],
+  },
+  {
+    id: 'tsum',
+    destinationId: 'bishkek',
+    name: {
+      en: 'TSUM Bishkek (Aichurek)',
+      ru: 'ЦУМ «Айчурек»',
+    },
+    address: {
+      en: '155 Chuy Ave, Bishkek',
+      ru: 'пр. Чуй, 155, Бишкек',
+    },
+    keywords: ['tsum', 'cum', 'aichurek', 'цум', 'айчурек', 'чуй', 'chuy', 'бишкек', 'bishkek'],
+  },
+  {
+    id: 'gum',
+    destinationId: 'bishkek',
+    name: {
+      en: 'GUM Bishkek (Chynar)',
+      ru: 'ГУМ «Чынар»',
+    },
+    address: {
+      en: '92 Chuy Ave, Bishkek',
+      ru: 'пр. Чуй, 92, Бишкек',
+    },
+    keywords: ['gum', 'chynar', 'гум', 'чынар', 'чуй', 'chuy', 'бишкек', 'bishkek'],
+  },
+  {
+    id: 'dordoi-plaza',
+    destinationId: 'bishkek',
+    name: {
+      en: 'Dordoi Plaza',
+      ru: 'Дордой Плаза',
+    },
+    address: {
+      en: '115 Ibraimov St, Bishkek',
+      ru: 'ул. Ибраимова, 115, Бишкек',
+    },
+    keywords: [
+      'dordoi',
+      'dordoi plaza',
+      'дордой',
+      'дордой плаза',
+      'ибраимова',
+      'ibraimov',
+      'бишкек',
+      'bishkek',
+    ],
+  },
+  {
+    id: 'asia-mall',
+    destinationId: 'bishkek',
+    name: {
+      en: 'Asia Mall',
+      ru: 'Азия Молл',
+    },
+    address: {
+      en: '3 Chyngyz Aitmatov Ave, Bishkek',
+      ru: 'пр. Чынгыза Айтматова, 3, Бишкек',
+    },
+    keywords: [
+      'asia mall',
+      'asiamall',
+      'азия молл',
+      'азиямол',
+      'айтматова',
+      'aitmatov',
+      'бишкек',
+      'bishkek',
+    ],
+  },
+  {
+    id: 'hyatt-regency',
+    destinationId: 'bishkek',
+    name: {
+      en: 'Hyatt Regency Bishkek',
+      ru: 'Hyatt Regency Bishkek (Хаятт Ридженси)',
+    },
+    address: {
+      en: '191 Yusup Abdrahmanov St, Bishkek',
+      ru: 'ул. Абдрахманова, 191, Бишкек',
+    },
+    keywords: [
+      'hyatt',
+      'hyatt regency',
+      'хаятт',
+      'хаят',
+      'абдрахманова',
+      'abdrahmanov',
+      'отель',
+      'hotel',
+      'бишкек',
+      'bishkek',
+    ],
+  },
+  {
+    id: 'sheraton',
+    destinationId: 'bishkek',
+    name: {
+      en: 'Sheraton Bishkek',
+      ru: 'Sheraton Bishkek (Шератон)',
+    },
+    address: {
+      en: '148B Kievskaya St, Bishkek',
+      ru: 'ул. Киевская, 148Б, Бишкек',
+    },
+    keywords: [
+      'sheraton',
+      'шератон',
+      'киевская',
+      'kievskaya',
+      'бишкек парк',
+      'bishkek park',
+      'отель',
+      'hotel',
+      'бишкек',
+      'bishkek',
+    ],
+  },
+  {
+    id: 'orion-hotel',
+    destinationId: 'bishkek',
+    name: {
+      en: 'Orion Hotel Bishkek',
+      ru: 'Orion Hotel Bishkek (Орион Отель)',
+    },
+    address: {
+      en: '21 Erkindik Blvd, Bishkek',
+      ru: 'бул. Эркиндик, 21, Бишкек',
+    },
+    keywords: [
+      'orion',
+      'orion hotel',
+      'орион',
+      'орион отель',
+      'эркиндик',
+      'erkindik',
+      'отель',
+      'hotel',
+      'бишкек',
+      'bishkek',
+    ],
+  },
+  {
+    id: 'novotel',
+    destinationId: 'bishkek',
+    name: {
+      en: 'Novotel Bishkek City Center',
+      ru: 'Novotel Bishkek (Новотель)',
+    },
+    address: {
+      en: '16 Manas Ave, Bishkek',
+      ru: 'пр. Манаса, 16, Бишкек',
+    },
+    keywords: [
+      'novotel',
+      'новотель',
+      'манаса',
+      'manas',
+      'отель',
+      'hotel',
+      'бишкек',
+      'bishkek',
+    ],
+  },
+];
+
+export const MAX_CHILD_SEATS = 3;
+
+export function inferDestinationIdFromText(rawText: string): string {
+  const text = rawText.trim().toLowerCase();
+  if (!text) return 'bishkek';
+
+  if (text.includes('karakol') || text.includes('каракол')) {
+    return 'karakol';
+  }
+  if (
+    text.includes('bokonbaevo') ||
+    text.includes('bokonbayevo') ||
+    text.includes('боконбаев') ||
+    text.includes('бөкөнбаев')
+  ) {
+    return 'bokonbaevo';
+  }
+  if (
+    text.includes('issyk-kul') ||
+    text.includes('issyk kul') ||
+    text.includes('cholpon') ||
+    text.includes('tamchy') ||
+    text.includes('bosteri') ||
+    text.includes('иссык-куль') ||
+    text.includes('чолпон') ||
+    text.includes('тамчы') ||
+    text.includes('бостери')
+  ) {
+    return 'issyk-kul';
+  }
+  if (text.includes('ala-archa') || text.includes('ala archa') || text.includes('ала-арча')) {
+    return 'ala-archa';
+  }
+  if (
+    text.includes('asanbay') ||
+    text.includes('асанбай') ||
+    text.includes('bishkek south') ||
+    text.includes('южн')
+  ) {
+    return 'bishkek-south';
+  }
+  if (text.includes('bishkek') || text.includes('бишкек')) {
+    return 'bishkek';
+  }
+
+  return 'custom';
+}
+
 export function calculateFare(
   baseKgs: number,
   baseUsd: number,
   destination: Destination,
-  withChildSeat = false
+  childSeatCount = 0
 ) {
+  const safeSeats = Math.max(0, Math.min(MAX_CHILD_SEATS, Math.floor(childSeatCount)));
   const kgs =
     Math.round((baseKgs * destination.multiplier) / 100) * 100 +
-    (withChildSeat ? CHILD_SEAT_PRICE_KGS : 0);
+    safeSeats * CHILD_SEAT_PRICE_KGS;
   const usd =
-    Math.round(baseUsd * destination.multiplier) +
-    (withChildSeat ? CHILD_SEAT_PRICE_USD : 0);
+    Math.round(baseUsd * destination.multiplier) + safeSeats * CHILD_SEAT_PRICE_USD;
   return { kgs, usd };
 }
 
 export function formatKgs(amount: number): string {
   return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+export function resolveDropoffDisplayLabel(formData: BookingFormData, lang: Language): string {
+  const destination =
+    DESTINATIONS.find((dest) => dest.id === formData.destinationId) ?? DESTINATIONS[0];
+  const typedDropoff = formData.dropoffText.trim();
+  const hotel = formData.hotelAddress.trim();
+
+  if (typedDropoff) {
+    // If dropoffText exactly equals a known preset's full label, use its clean short label
+    const matchedPreset = DESTINATIONS.find(
+      (d) => d.id !== 'custom' && (d.label.en === typedDropoff || d.label.ru === typedDropoff)
+    );
+    if (matchedPreset) {
+      return matchedPreset.shortLabel[lang];
+    }
+    return typedDropoff;
+  }
+
+  if (formData.destinationId === 'custom' && hotel) {
+    return hotel;
+  }
+
+  return destination.shortLabel[lang];
 }
 
 export function buildBookingMessage(formData: BookingFormData, lang: Language): string {
@@ -467,13 +738,12 @@ export function buildBookingMessage(formData: BookingFormData, lang: Language): 
     vehicle.basePriceKgs,
     vehicle.basePriceUsd,
     destination,
-    formData.childSeat
+    formData.childSeatCount
   );
 
   const airportLabel = TRANSLATIONS[lang].booking.airportName;
   const hotel = formData.hotelAddress.trim();
-  const destinationLabel =
-    formData.destinationId === 'custom' && hotel ? hotel : destination.shortLabel[lang];
+  const destinationLabel = resolveDropoffDisplayLabel(formData, lang);
 
   const fromLabel = formData.isReversed ? destinationLabel : airportLabel;
   const toLabel = formData.isReversed ? airportLabel : destinationLabel;
@@ -493,6 +763,11 @@ export function buildBookingMessage(formData: BookingFormData, lang: Language): 
   }
 
   lines.push(`Car: ${carLabel} (${priceLabel})`);
+
+  if (formData.childSeatCount > 0) {
+    lines.push(`Child seat: ${formData.childSeatCount}`);
+  }
+
   lines.push(`Date & Time: ${dateTimeLabel}`);
 
   if (flight) {
@@ -541,21 +816,29 @@ export const TRANSLATIONS = {
       toLabel: 'Drop-off',
       airportName: 'Manas Airport (BSZ)',
       swapAria: 'Swap pickup and drop-off',
+      dropoffPlaceholder: 'City, landmark, or address in Kyrgyzstan',
+      popularDestinationsHeading: 'Fixed-fare destinations',
+      landmarksHeading: 'Popular Bishkek hotels & landmarks',
+      liveSuggestionsHeading: 'Kyrgyzstan addresses & places',
+      searchingAddresses: 'Searching Kyrgyzstan...',
+      clearFieldAria: 'Clear address',
       hotelLabel: 'Hotel / Destination (Hotel name & address)',
-      hotelPlaceholder: 'e.g. Hyatt Regency Bishkek, 191 Abdrahmanov St',
+      hotelPlaceholder: 'Enter hotel name or address in Kyrgyzstan',
       selectTariffTitle: 'Select vehicle class',
       selectedCarBadge: 'Selected',
       optionSign: 'Meet with name sign',
       optionFree: 'Free',
       optionChildSeat: 'Child seat',
+      childSeatDecreaseAria: 'Decrease child seats',
+      childSeatIncreaseAria: 'Increase child seats',
       dateLabel: 'Arrival date',
       timeLabel: 'Time',
       flightLabel: 'Flight number',
       flightPlaceholder: 'e.g. TK 344',
       nameLabel: 'Passenger name',
       namePlaceholder: 'Alex Morgan',
-      contactLabel: 'Phone, WhatsApp, or Telegram',
-      contactPlaceholder: '+996 770 00 00 00 or @username',
+      contactLabel: 'Phone (WhatsApp / Telegram)',
+      contactPlaceholder: '+996 770 44 33 05',
       totalLabel: 'Fixed fare',
       submitBtn: 'Book Transfer',
       viewRoutesBtn: 'View Route',
@@ -564,9 +847,10 @@ export const TRANSLATIONS = {
       paymentNote: 'Pay after arrival: Cash (USD / KGS), Visa / Mastercard, or MBank transfer',
       errors: {
         dateRequired: 'Please select a travel date',
+        dropoffRequired: 'Please enter or select a drop-off destination',
         hotelRequired: 'Please enter your destination address or hotel name',
         nameRequired: 'Enter passenger name for meet & greet',
-        contactRequired: 'Enter phone number or messenger handle',
+        phoneInvalid: 'Please enter a valid international phone number (e.g. +996..., +7..., +1...)',
       },
     },
     fleetSection: {
@@ -719,21 +1003,29 @@ export const TRANSLATIONS = {
       toLabel: 'Куда',
       airportName: 'Аэропорт Манас (BSZ)',
       swapAria: 'Поменять местами откуда и куда',
+      dropoffPlaceholder: 'Город, ориентир или адрес в Кыргызстане',
+      popularDestinationsHeading: 'Фиксированные направления',
+      landmarksHeading: 'Популярные отели и ориентиры Бишкека',
+      liveSuggestionsHeading: 'Адреса и места в Кыргызстане',
+      searchingAddresses: 'Поиск по Кыргызстану...',
+      clearFieldAria: 'Очистить адрес',
       hotelLabel: 'Отель / Адрес назначения (название отеля и адрес)',
-      hotelPlaceholder: 'Например, Hyatt Regency Bishkek, ул. Абдрахманова 191',
+      hotelPlaceholder: 'Введите название отеля или адрес в Кыргызстане',
       selectTariffTitle: 'Выберите класс автомобиля',
       selectedCarBadge: 'Выбрано',
       optionSign: 'Встреча с табличкой',
       optionFree: 'Бесплатно',
       optionChildSeat: 'Детское кресло',
+      childSeatDecreaseAria: 'Уменьшить количество детских кресел',
+      childSeatIncreaseAria: 'Увеличить количество детских кресел',
       dateLabel: 'Дата прилёта',
       timeLabel: 'Время',
       flightLabel: 'Номер рейса',
       flightPlaceholder: 'Например, TK 344',
       nameLabel: 'Имя пассажира',
       namePlaceholder: 'Алексей / Айбек',
-      contactLabel: 'Телефон, WhatsApp или Telegram',
-      contactPlaceholder: '+996 770 00 00 00 или @username',
+      contactLabel: 'Телефон (WhatsApp / Telegram)',
+      contactPlaceholder: '+996 770 44 33 05',
       totalLabel: 'Фиксированная цена',
       submitBtn: 'Забронировать трансфер',
       viewRoutesBtn: 'Все маршруты',
@@ -742,9 +1034,10 @@ export const TRANSLATIONS = {
       paymentNote: 'Оплата после поездки: наличные (USD / сом), карта Visa / Mastercard или MBank',
       errors: {
         dateRequired: 'Выберите дату поездки',
+        dropoffRequired: 'Укажите или выберите пункт назначения',
         hotelRequired: 'Укажите название отеля или адрес назначения',
         nameRequired: 'Укажите имя для встречи с табличкой',
-        contactRequired: 'Укажите телефон или мессенджер для связи',
+        phoneInvalid: 'Введите корректный международный номер телефона (например, +996..., +7..., +1...)',
       },
     },
     fleetSection: {

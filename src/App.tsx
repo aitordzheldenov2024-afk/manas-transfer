@@ -9,7 +9,9 @@ import {
   TRANSLATIONS,
   buildBookingMessage,
   calculateFare,
+  resolveDropoffDisplayLabel,
 } from './data/transferData';
+import { validateInternationalPhone } from './utils/phoneValidation';
 import { Header } from './components/Header';
 import { HeroSection } from './components/HeroSection';
 import { FleetSection } from './components/FleetSection';
@@ -32,6 +34,7 @@ export default function App() {
   const [lang, setLang] = useState<Language>('en');
   const [formData, setFormData] = useState<BookingFormData>(() => ({
     destinationId: 'bishkek',
+    dropoffText: DESTINATIONS[0].label.en,
     hotelAddress: '',
     isReversed: false,
     vehicleId: 'economy',
@@ -39,7 +42,7 @@ export default function App() {
     time: '14:30',
     flightNumber: '',
     meetWithSign: true,
-    childSeat: false,
+    childSeatCount: 0,
     passengerName: '',
     contact: '',
   }));
@@ -54,6 +57,17 @@ export default function App() {
       lang === 'ru'
         ? 'Манас Трансфер — Трансфер из аэропорта Манас (BSZ) в Бишкек и по Кыргызстану'
         : 'Manas Transfer — Executive Airport Transfers from Manas (BSZ) Across Kyrgyzstan';
+
+    // Translate dropoffText only if it exactly matches a preset label in the other language
+    setFormData((prev) => {
+      const matched = DESTINATIONS.find(
+        (d) => d.id !== 'custom' && (d.label.en === prev.dropoffText || d.label.ru === prev.dropoffText)
+      );
+      if (matched && matched.label[lang] !== prev.dropoffText) {
+        return { ...prev, dropoffText: matched.label[lang] };
+      }
+      return prev;
+    });
   }, [lang]);
 
   useEffect(() => {
@@ -98,11 +112,21 @@ export default function App() {
   };
 
   const handleSelectDestinationFromRoutes = (destinationId: string) => {
-    setFormData((prev) => ({ ...prev, destinationId, isReversed: false }));
+    const dest = DESTINATIONS.find((d) => d.id === destinationId);
+    setFormData((prev) => ({
+      ...prev,
+      destinationId,
+      dropoffText: dest ? dest.label[lang] : prev.dropoffText,
+      isReversed: false,
+    }));
     scrollToBookingForm();
   };
 
   const handleSubmitBooking = () => {
+    if (!validateInternationalPhone(formData.contact)) {
+      return;
+    }
+
     const vehicle =
       FLEET_VEHICLES.find((v) => v.id === formData.vehicleId) ?? FLEET_VEHICLES[0];
     const destination =
@@ -111,15 +135,12 @@ export default function App() {
       vehicle.basePriceKgs,
       vehicle.basePriceUsd,
       destination,
-      formData.childSeat
+      formData.childSeatCount
     );
 
     const airportText = TRANSLATIONS[lang].booking.airportName;
     const hotel = formData.hotelAddress.trim();
-    const destText =
-      formData.destinationId === 'custom' && hotel
-        ? hotel
-        : destination.shortLabel[lang];
+    const destText = resolveDropoffDisplayLabel(formData, lang);
 
     const randomDigits = Math.floor(100 + Math.random() * 900);
     const reference = `MT-${formData.date.slice(5).replace('-', '')}-${randomDigits}`;
@@ -134,7 +155,7 @@ export default function App() {
       flightNumber: formData.flightNumber.trim(),
       vehicle,
       meetWithSign: formData.meetWithSign,
-      childSeat: formData.childSeat,
+      childSeatCount: formData.childSeatCount,
       priceKgs: kgs,
       priceUsd: usd,
       passengerName: formData.passengerName.trim(),

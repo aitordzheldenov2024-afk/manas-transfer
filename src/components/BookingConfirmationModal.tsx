@@ -56,7 +56,9 @@ export function BookingConfirmationModal({
   const getOptionsList = (b: ConfirmedBooking): string => {
     const selected: string[] = [];
     if (b.meetWithSign) selected.push(bLabels.optionSign);
-    if (b.childSeat) selected.push(bLabels.optionChildSeat);
+    if (b.childSeatCount > 0) {
+      selected.push(`${bLabels.optionChildSeat}: ${b.childSeatCount}`);
+    }
     return selected.length > 0 ? selected.join(', ') : t.optionsNone;
   };
 
@@ -77,6 +79,11 @@ export function BookingConfirmationModal({
     }
 
     lines.push(`Car: ${carLabel} (${priceLabel})`);
+
+    if (b.childSeatCount > 0) {
+      lines.push(`Child seat: ${b.childSeatCount}`);
+    }
+
     lines.push(`Date & Time: ${dateTimeLabel}`);
 
     if (flight) {

@@ -3,16 +3,18 @@ import {
   AlertCircle,
   ArrowLeftRight,
   ArrowRight,
-  Building2,
   Calendar,
   CarFront,
   Check,
   Clock,
+  Minus,
   Phone,
   Plane,
+  Plus,
   User,
 } from 'lucide-react';
 import {
+  BISHKEK_LANDMARKS,
   BookingFormData,
   CHILD_SEAT_PRICE_KGS,
   DESTINATIONS,
@@ -20,10 +22,20 @@ import {
   FleetVehicle,
   HERO_IMAGE,
   Language,
+  MAX_CHILD_SEATS,
   TRANSLATIONS,
   calculateFare,
   formatKgs,
+  inferDestinationIdFromText,
 } from '../data/transferData';
+import {
+  AddressAutocompleteInput,
+  PresetDestinationOption,
+} from './AddressAutocompleteInput';
+import {
+  sanitizePhoneInput,
+  validateInternationalPhone,
+} from '../utils/phoneValidation';
 
 interface HeroSectionProps {
   lang: Language;
@@ -71,7 +83,7 @@ export function HeroSection({
   const t = TRANSLATIONS[lang];
   const [heroImgFailed, setHeroImgFailed] = useState(false);
   const [errors, setErrors] = useState<
-    Partial<Record<'passengerName' | 'contact' | 'date' | 'hotelAddress', string>>
+    Partial<Record<'passengerName' | 'contact' | 'date' | 'dropoffText' | 'hotelAddress', string>>
   >({});
 
   const selectedVehicle =
@@ -82,26 +94,35 @@ export function HeroSection({
     selectedVehicle.basePriceKgs,
     selectedVehicle.basePriceUsd,
     selectedDestination,
-    formData.childSeat
+    formData.childSeatCount
   );
+
+  const presetOptions: PresetDestinationOption[] = DESTINATIONS.filter(
+    (dest) => dest.id !== 'custom'
+  ).map((dest) => ({
+    id: dest.id,
+    label: dest.label[lang],
+    subtitle: dest.regionNote[lang],
+    meta: dest.duration[lang],
+  }));
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const nextErrors: Partial<
-      Record<'passengerName' | 'contact' | 'date' | 'hotelAddress', string>
+      Record<'passengerName' | 'contact' | 'date' | 'dropoffText' | 'hotelAddress', string>
     > = {};
 
     if (!formData.date) {
       nextErrors.date = t.booking.errors.dateRequired;
     }
-    if (formData.destinationId === 'custom' && formData.hotelAddress.trim().length < 3) {
-      nextErrors.hotelAddress = t.booking.errors.hotelRequired;
+    if (formData.dropoffText.trim().length < 2) {
+      nextErrors.dropoffText = t.booking.errors.dropoffRequired;
     }
     if (formData.passengerName.trim().length < 2) {
       nextErrors.passengerName = t.booking.errors.nameRequired;
     }
-    if (formData.contact.trim().length < 5) {
-      nextErrors.contact = t.booking.errors.contactRequired;
+    if (!validateInternationalPhone(formData.contact)) {
+      nextErrors.contact = t.booking.errors.phoneInvalid;
     }
 
     setErrors(nextErrors);
@@ -110,7 +131,9 @@ export function HeroSection({
     }
   };
 
-  const clearError = (field: 'passengerName' | 'contact' | 'date' | 'hotelAddress') => {
+  const clearError = (
+    field: 'passengerName' | 'contact' | 'date' | 'dropoffText' | 'hotelAddress'
+  ) => {
     if (errors[field]) {
       setErrors((prev) => {
         const copy = { ...prev };
@@ -120,22 +143,63 @@ export function HeroSection({
     }
   };
 
-  const destinationSelect = (
-    <select
-      aria-label={formData.isReversed ? t.booking.fromLabel : t.booking.toLabel}
-      value={formData.destinationId}
-      onChange={(e) => {
-        onUpdateForm({ destinationId: e.target.value });
-        clearError('hotelAddress');
-      }}
-      className="w-full bg-[#F8FAFC] hover:bg-[#F1F5F9] focus:bg-white border border-[#CBD5E1] focus:border-[#0f2747] rounded-xl px-3.5 py-2.5 text-[14px] font-medium text-[#041427] outline-none transition-colors cursor-pointer"
-    >
-      {DESTINATIONS.map((dest) => (
-        <option key={dest.id} value={dest.id}>
-          {dest.label[lang]}
-        </option>
-      ))}
-    </select>
+  const destinationCombobox = (
+    <div>
+      <AddressAutocompleteInput
+        id="booking-dropoff"
+        ariaLabel={formData.isReversed ? t.booking.fromLabel : t.booking.toLabel}
+        value={formData.dropoffText}
+        placeholder={t.booking.dropoffPlaceholder}
+        icon="pin"
+        lang={lang}
+        error={Boolean(errors.dropoffText)}
+        presets={presetOptions}
+        selectedPresetId={formData.destinationId}
+        presetsHeading={t.booking.popularDestinationsHeading}
+        landmarks={BISHKEK_LANDMARKS}
+        landmarksHeading={t.booking.landmarksHeading}
+        suggestionsHeading={t.booking.liveSuggestionsHeading}
+        searchingLabel={t.booking.searchingAddresses}
+        clearAriaLabel={t.booking.clearFieldAria}
+        onChangeText={(text) => {
+          onUpdateForm({
+            dropoffText: text,
+            destinationId: inferDestinationIdFromText(text),
+          });
+          clearError('dropoffText');
+        }}
+        onSelectPreset={(preset) => {
+          onUpdateForm({
+            destinationId: preset.id,
+            dropoffText: preset.label,
+          });
+          clearError('dropoffText');
+        }}
+        onSelectLandmark={(landmark, formattedAddress) => {
+          onUpdateForm({
+            destinationId: landmark.destinationId,
+            dropoffText: formattedAddress,
+          });
+          clearError('dropoffText');
+        }}
+        onSelectSuggestion={(formattedAddress, props) => {
+          const inferenceSource = [formattedAddress, props.city, props.state]
+            .filter(Boolean)
+            .join(' ');
+          onUpdateForm({
+            dropoffText: formattedAddress,
+            destinationId: inferDestinationIdFromText(inferenceSource),
+          });
+          clearError('dropoffText');
+        }}
+      />
+      {errors.dropoffText && (
+        <p className="mt-1 flex items-center gap-1 text-[12px] font-medium text-rose-600">
+          <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+          <span>{errors.dropoffText}</span>
+        </p>
+      )}
+    </div>
   );
 
   const airportReadonly = (
@@ -226,7 +290,7 @@ export function HeroSection({
                 <label className="block text-[12px] font-semibold text-[#334155] mb-1.5">
                   A · {t.booking.fromLabel}
                 </label>
-                {formData.isReversed ? destinationSelect : airportReadonly}
+                {formData.isReversed ? destinationCombobox : airportReadonly}
               </div>
 
               <div className="flex lg:pt-[22px] lg:justify-center">
@@ -245,7 +309,7 @@ export function HeroSection({
                 <label className="block text-[12px] font-semibold text-[#334155] mb-1.5">
                   B · {t.booking.toLabel}
                 </label>
-                {formData.isReversed ? airportReadonly : destinationSelect}
+                {formData.isReversed ? airportReadonly : destinationCombobox}
               </div>
 
               <div>
@@ -255,24 +319,31 @@ export function HeroSection({
                 >
                   {t.booking.hotelLabel}
                 </label>
-                <div className="relative">
-                  <Building2 className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                  <input
-                    id="booking-hotel"
-                    type="text"
-                    value={formData.hotelAddress}
-                    onChange={(e) => {
-                      onUpdateForm({ hotelAddress: e.target.value });
-                      clearError('hotelAddress');
-                    }}
-                    placeholder={t.booking.hotelPlaceholder}
-                    className={`w-full bg-[#F8FAFC] focus:bg-white border rounded-xl pl-10 pr-3.5 py-2.5 text-[14px] text-[#041427] placeholder:text-[#94A3B8] outline-none transition-colors ${
-                      errors.hotelAddress
-                        ? 'border-rose-500'
-                        : 'border-[#CBD5E1] focus:border-[#0f2747]'
-                    }`}
-                  />
-                </div>
+                <AddressAutocompleteInput
+                  id="booking-hotel"
+                  value={formData.hotelAddress}
+                  placeholder={t.booking.hotelPlaceholder}
+                  icon="hotel"
+                  lang={lang}
+                  error={Boolean(errors.hotelAddress)}
+                  landmarks={BISHKEK_LANDMARKS}
+                  landmarksHeading={t.booking.landmarksHeading}
+                  suggestionsHeading={t.booking.liveSuggestionsHeading}
+                  searchingLabel={t.booking.searchingAddresses}
+                  clearAriaLabel={t.booking.clearFieldAria}
+                  onChangeText={(text) => {
+                    onUpdateForm({ hotelAddress: text });
+                    clearError('hotelAddress');
+                  }}
+                  onSelectLandmark={(_landmark, formattedAddress) => {
+                    onUpdateForm({ hotelAddress: formattedAddress });
+                    clearError('hotelAddress');
+                  }}
+                  onSelectSuggestion={(formattedAddress) => {
+                    onUpdateForm({ hotelAddress: formattedAddress });
+                    clearError('hotelAddress');
+                  }}
+                />
                 {errors.hotelAddress && (
                   <p className="mt-1 flex items-center gap-1 text-[12px] font-medium text-rose-600">
                     <AlertCircle className="w-3.5 h-3.5 shrink-0" />
@@ -314,7 +385,7 @@ export function HeroSection({
                     vehicle.basePriceKgs,
                     vehicle.basePriceUsd,
                     selectedDestination,
-                    formData.childSeat
+                    formData.childSeatCount
                   );
 
                   return (
@@ -381,21 +452,90 @@ export function HeroSection({
                 </span>
               </button>
 
-              <button
-                type="button"
-                aria-pressed={formData.childSeat}
-                onClick={() => onUpdateForm({ childSeat: !formData.childSeat })}
-                className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-lg text-[13px] font-semibold transition-colors cursor-pointer whitespace-nowrap border ${
-                  formData.childSeat
+              <div
+                className={`inline-flex items-center gap-2.5 px-3 py-1.5 rounded-lg text-[13px] font-semibold transition-colors whitespace-nowrap border ${
+                  formData.childSeatCount > 0
                     ? 'bg-[#0f2747] border-[#0f2747] text-white'
-                    : 'bg-[#F8FAFC] border-[#CBD5E1] text-[#334155] hover:border-[#0f2747]'
+                    : 'bg-[#F8FAFC] border-[#CBD5E1] text-[#334155]'
                 }`}
               >
-                {formData.childSeat && <Check className="w-3.5 h-3.5 text-[#c8a663]" />}
-                <span>
-                  {t.booking.optionChildSeat} · +{CHILD_SEAT_PRICE_KGS} {t.booking.som}
-                </span>
-              </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onUpdateForm({
+                      childSeatCount: formData.childSeatCount === 0 ? 1 : formData.childSeatCount,
+                    })
+                  }
+                  className="inline-flex items-center gap-1.5 cursor-pointer"
+                >
+                  {formData.childSeatCount > 0 && (
+                    <Check className="w-3.5 h-3.5 text-[#c8a663]" />
+                  )}
+                  <span>
+                    {t.booking.optionChildSeat} · +
+                    {formatKgs(
+                      (formData.childSeatCount > 0 ? formData.childSeatCount : 1) *
+                        CHILD_SEAT_PRICE_KGS
+                    )}{' '}
+                    {t.booking.som}
+                  </span>
+                </button>
+
+                <div
+                  className={`inline-flex items-center gap-1 rounded-md p-0.5 ${
+                    formData.childSeatCount > 0 ? 'bg-white/10' : 'bg-white border border-[#CBD5E1]'
+                  }`}
+                >
+                  <button
+                    type="button"
+                    aria-label={t.booking.childSeatDecreaseAria}
+                    disabled={formData.childSeatCount <= 0}
+                    onClick={() =>
+                      onUpdateForm({
+                        childSeatCount: Math.max(0, formData.childSeatCount - 1),
+                      })
+                    }
+                    className={`inline-flex items-center justify-center w-6 h-6 rounded transition-colors ${
+                      formData.childSeatCount <= 0
+                        ? 'opacity-35 cursor-not-allowed'
+                        : formData.childSeatCount > 0
+                        ? 'hover:bg-white/15 text-white cursor-pointer'
+                        : 'hover:bg-[#F1F5F9] text-[#041427] cursor-pointer'
+                    }`}
+                  >
+                    <Minus className="w-3.5 h-3.5" />
+                  </button>
+
+                  <span
+                    aria-live="polite"
+                    className={`min-w-[1.25rem] text-center font-mono text-[13px] font-bold tabular-nums ${
+                      formData.childSeatCount > 0 ? 'text-[#f9e4c8]' : 'text-[#041427]'
+                    }`}
+                  >
+                    {formData.childSeatCount}
+                  </span>
+
+                  <button
+                    type="button"
+                    aria-label={t.booking.childSeatIncreaseAria}
+                    disabled={formData.childSeatCount >= MAX_CHILD_SEATS}
+                    onClick={() =>
+                      onUpdateForm({
+                        childSeatCount: Math.min(MAX_CHILD_SEATS, formData.childSeatCount + 1),
+                      })
+                    }
+                    className={`inline-flex items-center justify-center w-6 h-6 rounded transition-colors ${
+                      formData.childSeatCount >= MAX_CHILD_SEATS
+                        ? 'opacity-35 cursor-not-allowed'
+                        : formData.childSeatCount > 0
+                        ? 'hover:bg-white/15 text-white cursor-pointer'
+                        : 'hover:bg-[#F1F5F9] text-[#041427] cursor-pointer'
+                    }`}
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
             </div>
 
             {/* Row 4: Date, Time, Flight Number, Passenger & Contact */}
@@ -510,24 +650,47 @@ export function HeroSection({
                   {t.booking.contactLabel}
                 </label>
                 <div className="relative">
-                  <Phone className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                  <Phone
+                    className={`w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none ${
+                      errors.contact ? 'text-rose-500' : 'text-[#64748B]'
+                    }`}
+                  />
                   <input
                     id="booking-contact"
-                    type="text"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
                     value={formData.contact}
                     onChange={(e) => {
-                      onUpdateForm({ contact: e.target.value });
-                      clearError('contact');
+                      const nextPhone = sanitizePhoneInput(e.target.value);
+                      onUpdateForm({ contact: nextPhone });
+                      if (errors.contact && validateInternationalPhone(nextPhone)) {
+                        clearError('contact');
+                      }
+                    }}
+                    onBlur={() => {
+                      if (formData.contact.trim() && !validateInternationalPhone(formData.contact)) {
+                        setErrors((prev) => ({
+                          ...prev,
+                          contact: t.booking.errors.phoneInvalid,
+                        }));
+                      }
                     }}
                     placeholder={t.booking.contactPlaceholder}
-                    className={`w-full bg-[#F8FAFC] focus:bg-white border rounded-xl pl-10 pr-3 py-2.5 text-[14px] text-[#041427] placeholder:text-[#94A3B8] outline-none transition-colors ${
-                      errors.contact ? 'border-rose-500' : 'border-[#CBD5E1] focus:border-[#0f2747]'
+                    aria-invalid={Boolean(errors.contact)}
+                    className={`w-full border rounded-xl pl-10 pr-3 py-2.5 text-[14px] font-mono tabular-nums text-[#041427] placeholder:font-sans placeholder:text-[#94A3B8] outline-none transition-colors ${
+                      errors.contact
+                        ? 'border-rose-500 bg-rose-50/40 focus:bg-white focus:border-rose-600'
+                        : 'bg-[#F8FAFC] focus:bg-white border-[#CBD5E1] focus:border-[#0f2747]'
                     }`}
                   />
                 </div>
                 {errors.contact && (
-                  <p className="mt-1 flex items-center gap-1 text-[12px] font-medium text-rose-600">
-                    <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                  <p
+                    role="alert"
+                    className="mt-1 flex items-start gap-1 text-[12px] font-medium text-rose-600 leading-snug"
+                  >
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
                     <span>{errors.contact}</span>
                   </p>
                 )}
